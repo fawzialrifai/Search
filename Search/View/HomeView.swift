@@ -13,25 +13,30 @@ struct HomeView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 32) {
-                    Spacer()
-                    VStack {
-                        Text("Search")
-                            .font(.largeTitle.bold())
-                        SearchBar()
+                    SearchBar()
+                    if viewModel.recentSearches.count > 0 {
+                        RecentsSection()
                     }
-                    Spacer()
-                    if viewModel.photos.count > 0 {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Random Photos")
-                                .font(.headline)
-                                .padding(.horizontal, 32)
-                            RandomPhotosScrollView()
-                        }
+                    if viewModel.randomPhotos.count > 0 {
+                        RandomPhotosSection()
                     }
                 }
             }
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Home")
             .environmentObject(viewModel)
+            .actionSheet(isPresented: $viewModel.isClearAllRecentsPresented) {
+                ActionSheet(
+                    title: Text("All recent searches will be cleared."),
+                    buttons: [
+                        .default(Text("Clear All")) {
+                            withAnimation {
+                                viewModel.recentSearches.removeAll()
+                            }
+                        },
+                        .cancel()
+                    ]
+                )
+            }
         }
     }
 }
@@ -40,10 +45,14 @@ struct SearchBar: View {
     @EnvironmentObject var viewModel: HomeViewModel
     var body: some View {
         HStack {
-            TextField("Search for photos", text: $viewModel.query, onCommit: { viewModel.submitQuery() })
+            TextField("Search for photos", text: $viewModel.query, onCommit: { viewModel.search(for: viewModel.query) })
                 .frame(maxWidth: 300)
-            NavigationLink(destination: ResultsView(query: viewModel.query.trimmed), isActive: $viewModel.isResultsPresented) {
-                Image(systemName: "magnifyingglass")
+            NavigationLink(destination: ResultsView(query: viewModel.query.trimmed), isActive: $viewModel.isQueryResultsPresented) {
+                Button {
+                    viewModel.search(for: viewModel.query)
+                } label: {
+                    Image(systemName: "magnifyingglass")
+                }
             }
             .disabled(viewModel.query.isTotallyEmpty)
         }
@@ -55,28 +64,93 @@ struct SearchBar: View {
     }
 }
 
-struct RandomPhotosScrollView: View {
+struct RecentsSection: View {
     @EnvironmentObject var viewModel: HomeViewModel
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(spacing: 16) {
-                ForEach(viewModel.photos, id: \.id) { photo in
-                    Button {
-                        guard let url = photo.user.portfolioUrl else { return }
-                        UIApplication.shared.open(url)
-                    } label: {
-                        ResultView(photo: photo)
-                            .frame(width: 200, height: 200)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .shadow(radius: 2)
-                            .onAppear {
-                                viewModel.fetchMorePhotos(currentPhoto: photo)
-                            }
-                    }
-                    .allowsHitTesting(photo.user.portfolio_url != nil)
+        VStack(spacing: 8) {
+            HStack {
+                Text("Recents")
+                    .font(.headline)
+                Spacer()
+                Button("Clear All") {
+                    viewModel.isClearAllRecentsPresented = true
                 }
             }
-            .padding()
+            .padding(.horizontal, 24)
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 16) {
+                    ForEach(viewModel.recentSearches, id: \.self) { query in
+                        RecentQueryView(query: query)
+                    }
+                }
+                .padding()
+            }
+        }
+    }
+}
+
+struct RecentQueryView: View {
+    let query: String
+    @EnvironmentObject var viewModel: HomeViewModel
+    var body: some View {
+        Button {
+            viewModel.query = query
+            viewModel.search(for: query)
+        } label: {
+            ZStack {
+                Color.blue
+                Text(query)
+                    .foregroundColor(.white)
+                    .padding()
+            }
+            .frame(height: 100)
+            .frame(minWidth: 100)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .shadow(radius: 2)
+            .contextMenu(menuItems: {
+                Button {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        withAnimation {
+                            viewModel.deleteFromRecents(query)
+                        }
+                    }
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+            })
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
+struct RandomPhotosSection: View {
+    @EnvironmentObject var viewModel: HomeViewModel
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Random Photos")
+                .font(.headline)
+                .padding(.horizontal, 24)
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 16) {
+                    ForEach(viewModel.randomPhotos, id: \.id) { photo in
+                        Button {
+                            guard let url = photo.user.portfolioUrl else { return }
+                            UIApplication.shared.open(url)
+                        } label: {
+                            ResultView(photo: photo)
+                                .frame(width: 200, height: 200)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .shadow(radius: 2)
+                                .onAppear {
+                                    viewModel.fetchMorePhotos(currentPhoto: photo)
+                                }
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        .allowsHitTesting(photo.user.portfolio_url != nil)
+                    }
+                }
+                .padding()
+            }
         }
     }
 }
