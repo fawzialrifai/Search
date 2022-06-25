@@ -47,6 +47,8 @@ import Foundation
                         }
                     } else if response.statusCode == 401 {
                         self.error = .authenticationError
+                    } else if response.statusCode == 403 {
+                        self.error = .limitError
                     }
                 }
                 self.isFetching = false
