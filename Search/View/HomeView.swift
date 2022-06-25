@@ -19,6 +19,8 @@ struct HomeView: View {
                     }
                     if viewModel.randomPhotos.count > 0 {
                         RandomPhotosSection()
+                    } else {
+                        PlaceholderSection()
                     }
                 }
             }
@@ -129,6 +131,28 @@ struct RandomPhotosSection: View {
                         }
                         .buttonStyle(PlainButtonStyle())
                         .allowsHitTesting(photo.user.portfolio_url != nil)
+                    }
+                }
+                .padding()
+            }
+        }
+    }
+}
+
+struct PlaceholderSection: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Random Photos")
+                .font(.headline)
+                .padding(.horizontal, 24)
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 16) {
+                    ForEach(1 ..< 15, id: \.self) { placeholder in
+                        Rectangle()
+                            .foregroundColor(Color.gray)
+                            .frame(width: 200, height: 200)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .shadow(radius: 2)
                     }
                 }
                 .padding()
