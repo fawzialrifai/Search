@@ -28,7 +28,7 @@ struct HomeView: View {
                 ActionSheet(
                     title: Text("All recent searches will be cleared."),
                     buttons: [
-                        .default(Text("Clear All")) {
+                        .default(Text("Clear")) {
                             withAnimation {
                                 viewModel.recentSearches.removeAll()
                             }
@@ -72,7 +72,7 @@ struct RecentsSection: View {
                 Text("Recent Searches")
                     .font(.headline)
                 Spacer()
-                Button("Clear All") {
+                Button("Clear") {
                     viewModel.isClearAllRecentsPresented = true
                 }
             }

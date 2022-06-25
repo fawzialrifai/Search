@@ -64,10 +64,4 @@ import Foundation
             }
         }
     }
-    
-    func deleteFromRecents(_ query: String) {
-        if let index = recentSearches.firstIndex(of: query) {
-            recentSearches.remove(at: index)
-        }
-    }
 }
