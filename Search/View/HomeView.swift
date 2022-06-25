@@ -42,7 +42,6 @@ struct SearchBar: View {
         HStack {
             TextField("Search for photos", text: $viewModel.query, onCommit: { viewModel.submitQuery() })
                 .frame(maxWidth: 300)
-                .keyboardType(.webSearch)
             NavigationLink(destination: ResultsView(query: viewModel.query.trimmed), isActive: $viewModel.isResultsPresented) {
                 Image(systemName: "magnifyingglass")
             }
