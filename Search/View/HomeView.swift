@@ -79,7 +79,7 @@ struct RecentsSection: View {
             .padding(.horizontal, 24)
             Divider()
                 .padding(.leading, 24)
-            ForEach(viewModel.recentSearches.reversed().prefix(3), id: \.self) { query in
+            ForEach(viewModel.recentSearches.prefix(3), id: \.self) { query in
                 RecentQueryView(query: query)
             }
         }

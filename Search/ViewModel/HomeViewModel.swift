@@ -55,9 +55,11 @@ import Foundation
     func search(for query: String) {
         if !query.isTotallyEmpty {
             isQueryResultsPresented = true
-            if !recentSearches.contains(query.trimmed) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    self.recentSearches.append(query.trimmed)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                if let index = self.recentSearches.firstIndex(of: query) {
+                    self.recentSearches.move(fromOffsets: [index], toOffset: 0)
+                } else {
+                    self.recentSearches.insert(query.trimmed, at: 0)
                 }
             }
         }
