@@ -67,9 +67,9 @@ struct SearchBar: View {
 struct RecentsSection: View {
     @EnvironmentObject var viewModel: HomeViewModel
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 16) {
             HStack {
-                Text("Recent")
+                Text("Recent Searches")
                     .font(.headline)
                 Spacer()
                 Button("Clear All") {
@@ -77,13 +77,10 @@ struct RecentsSection: View {
                 }
             }
             .padding(.horizontal, 24)
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 16) {
-                    ForEach(viewModel.recentSearches, id: \.self) { query in
-                        RecentQueryView(query: query)
-                    }
-                }
-                .padding()
+            Divider()
+                .padding(.leading, 24)
+            ForEach(viewModel.recentSearches.reversed().prefix(3), id: \.self) { query in
+                RecentQueryView(query: query)
             }
         }
     }
@@ -97,29 +94,14 @@ struct RecentQueryView: View {
             viewModel.query = query
             viewModel.search(for: query)
         } label: {
-            ZStack {
-                Color.blue
+            HStack {
                 Text(query)
-                    .foregroundColor(.white)
-                    .padding()
+                Spacer()
             }
-            .frame(height: 100)
-            .frame(minWidth: 100)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .shadow(radius: 2)
-            .contextMenu(menuItems: {
-                Button {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        withAnimation {
-                            viewModel.deleteFromRecents(query)
-                        }
-                    }
-                } label: {
-                    Label("Delete", systemImage: "trash")
-                }
-            })
+            .padding(.horizontal, 32)
         }
-        .buttonStyle(PlainButtonStyle())
+        Divider()
+            .padding(.leading, 32)
     }
 }
 
