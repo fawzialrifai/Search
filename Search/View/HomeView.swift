@@ -11,7 +11,7 @@ struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     var body: some View {
         NavigationView {
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack(spacing: 32) {
                     SearchBar()
                     if viewModel.recentSearches.count > 0 {
@@ -69,7 +69,7 @@ struct RecentsSection: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack {
-                Text("Recents")
+                Text("Recent")
                     .font(.headline)
                 Spacer()
                 Button("Clear All") {
