@@ -8,6 +8,7 @@
 import Foundation
 
 @MainActor class HomeViewModel: ObservableObject {
+    @Published var searchBarText = ""
     var recentSearches = [String]() {
         willSet {
             objectWillChange.send()
@@ -18,7 +19,6 @@ import Foundation
     }
     @Published var isClearAllRecentsPresented = false
     @Published var randomPhotos = [Photo]()
-    @Published var searchBarText = ""
     @Published var query = ""
     @Published var isQueryResultsPresented = false
     var url: URL? {

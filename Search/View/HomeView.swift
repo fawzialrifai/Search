@@ -79,10 +79,12 @@ struct RecentsSection: View {
                 }
             }
             .padding(.horizontal, 24)
-            Divider()
-                .padding(.leading, 24)
-            ForEach(viewModel.recentSearches.prefix(3), id: \.self) { query in
-                RecentQueryView(query: query)
+            VStack {
+                Divider()
+                    .padding(.leading, 24)
+                ForEach(viewModel.recentSearches.prefix(3), id: \.self) { query in
+                    RecentQueryView(query: query)
+                }
             }
         }
     }
