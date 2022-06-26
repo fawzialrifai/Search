@@ -124,13 +124,12 @@ struct RandomPhotosSection: View {
                         } label: {
                             ResultView(photo: photo)
                                 .frame(width: 200, height: 200)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .cornerRadius(10)
                                 .shadow(radius: 2)
                                 .onAppear {
                                     viewModel.fetchMorePhotos(currentPhoto: photo)
                                 }
                         }
-                        .buttonStyle(PlainButtonStyle())
                         .allowsHitTesting(photo.user.portfolio_url != nil)
                     }
                 }

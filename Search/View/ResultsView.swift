@@ -59,7 +59,6 @@ struct ResultsGrid: View {
                         ResultView(photo: photo)
                             .aspectRatio(1, contentMode: .fill)
                     }
-                    .buttonStyle(PlainButtonStyle())
                     .onAppear {
                         viewModel.fetchMorePhotos(currentPhoto: photo)
                     }
