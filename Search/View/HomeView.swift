@@ -71,7 +71,7 @@ struct RecentsSection: View {
     var body: some View {
         VStack(spacing: 16) {
             HStack {
-                Text("Recent Searches")
+                Text("Recent")
                     .font(.headline)
                 Spacer()
                 Button("Clear") {
@@ -112,7 +112,7 @@ struct RandomPhotosSection: View {
     @EnvironmentObject var viewModel: HomeViewModel
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Random Photos")
+            Text("Editorial")
                 .font(.headline)
                 .padding(.horizontal, 24)
             ScrollView(.horizontal, showsIndicators: false) {
@@ -142,7 +142,7 @@ struct RandomPhotosSection: View {
 struct PlaceholderSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Random Photos")
+            Text("Editorial")
                 .font(.headline)
                 .padding(.horizontal, 24)
             ScrollView(.horizontal, showsIndicators: false) {

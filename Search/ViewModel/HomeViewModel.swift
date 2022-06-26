@@ -21,11 +21,12 @@ import Foundation
     @Published var randomPhotos = [Photo]()
     @Published var query = ""
     @Published var isQueryResultsPresented = false
+    var currentPage = 1
     var url: URL? {
         let accessKey = "YDGu7GdDGVgfbIy7POPO2bqwwZ95phdMkCJ2MZAkbkA"
-        let baseURL = "https://api.unsplash.com/photos/random"
+        let baseURL = "https://api.unsplash.com/photos"
         let count = 30
-        return URL(string: "\(baseURL)?client_id=\(accessKey)&count=\(count)")
+        return URL(string: "\(baseURL)?client_id=\(accessKey)&page=\(currentPage)&per_page=\(count)")
     }
     
     init() {
@@ -48,6 +49,7 @@ import Foundation
     func fetchMorePhotos(currentPhoto: Photo) {
         if let index = randomPhotos.firstIndex(where: { $0.id == currentPhoto.id }) {
             if randomPhotos.count - index == 15 {
+                currentPage += 1
                 fetchRandomPhotos()
             }
         }
