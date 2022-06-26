@@ -48,7 +48,7 @@ struct SearchBar: View {
     var body: some View {
         HStack {
             TextField("Search for photos", text: $viewModel.searchBarText, onCommit: { viewModel.search(for: viewModel.searchBarText) })
-                .frame(maxWidth: 300)
+                .frame(maxWidth: 400)
             NavigationLink(destination: ResultsView(query: viewModel.query.trimmed), isActive: $viewModel.isQueryResultsPresented) {
                 Button {
                     viewModel.search(for: viewModel.searchBarText)
