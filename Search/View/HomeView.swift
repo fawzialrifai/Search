@@ -47,16 +47,16 @@ struct SearchBar: View {
     @EnvironmentObject var viewModel: HomeViewModel
     var body: some View {
         HStack {
-            TextField("Search for photos", text: $viewModel.query, onCommit: { viewModel.search(for: viewModel.query) })
+            TextField("Search for photos", text: $viewModel.searchBarText, onCommit: { viewModel.search(for: viewModel.searchBarText) })
                 .frame(maxWidth: 300)
             NavigationLink(destination: ResultsView(query: viewModel.query.trimmed), isActive: $viewModel.isQueryResultsPresented) {
                 Button {
-                    viewModel.search(for: viewModel.query)
+                    viewModel.search(for: viewModel.searchBarText)
                 } label: {
                     Image(systemName: "magnifyingglass")
                 }
             }
-            .disabled(viewModel.query.isTotallyEmpty)
+            .disabled(viewModel.searchBarText.isTotallyEmpty)
         }
         .padding()
         .background(Color(UIColor.secondarySystemGroupedBackground))
@@ -93,7 +93,6 @@ struct RecentQueryView: View {
     @EnvironmentObject var viewModel: HomeViewModel
     var body: some View {
         Button {
-            viewModel.query = query
             viewModel.search(for: query)
         } label: {
             HStack {

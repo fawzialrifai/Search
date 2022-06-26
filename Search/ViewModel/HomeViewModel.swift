@@ -18,6 +18,7 @@ import Foundation
     }
     @Published var isClearAllRecentsPresented = false
     @Published var randomPhotos = [Photo]()
+    @Published var searchBarText = ""
     @Published var query = ""
     @Published var isQueryResultsPresented = false
     var url: URL? {
@@ -54,6 +55,7 @@ import Foundation
     
     func search(for query: String) {
         if !query.isTotallyEmpty {
+            self.query = query
             isQueryResultsPresented = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 if let index = self.recentSearches.firstIndex(of: query) {
