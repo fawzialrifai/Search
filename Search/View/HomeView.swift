@@ -11,18 +11,19 @@ struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     var body: some View {
         NavigationView {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 32) {
+            GeometryReader { geometryReader in
+                ScrollView(showsIndicators: false) {
                     SearchBar()
-                    if viewModel.recentSearches.count > 0 {
-                        RecentsSection()
-                    }
+                        .frame(width: geometryReader.size.width)
+                    RecentsSection()
+                        .frame(width: geometryReader.size.width)
                     if viewModel.randomPhotos.count > 0 {
-                        RandomPhotosSection()
+                        RandomPhotosSection(contentPadding: geometryReader.safeAreaInsets.leading)
                     } else {
-                        PlaceholderSection()
+                        PlaceholderSection(contentPadding: geometryReader.safeAreaInsets.leading)
                     }
                 }
+                .edgesIgnoringSafeArea(.horizontal)
             }
             .navigationTitle("Home")
             .environmentObject(viewModel)
@@ -40,6 +41,7 @@ struct HomeView: View {
                 )
             }
         }
+        .navigationViewStyle(.stack)
     }
 }
 
@@ -69,23 +71,24 @@ struct SearchBar: View {
 struct RecentsSection: View {
     @EnvironmentObject var viewModel: HomeViewModel
     var body: some View {
-        VStack(spacing: 16) {
-            HStack {
-                Text("Recent")
-                    .font(.headline)
-                Spacer()
-                Button("Clear") {
-                    viewModel.isClearAllRecentsPresented = true
-                }
-            }
-            .padding(.horizontal, 24)
+        if viewModel.recentSearches.count > 0 {
             VStack {
+                HStack {
+                    Text("Recent")
+                        .font(.headline)
+                    Spacer()
+                    Button("Clear") {
+                        viewModel.isClearAllRecentsPresented = true
+                    }
+                }
+                .padding(.horizontal, 24)
                 Divider()
                     .padding(.leading, 24)
                 ForEach(viewModel.recentSearches.prefix(3), id: \.self) { query in
                     RecentQueryView(query: query)
                 }
             }
+            .padding(.bottom)
         }
     }
 }
@@ -109,48 +112,54 @@ struct RecentQueryView: View {
 }
 
 struct RandomPhotosSection: View {
+    let contentPadding: CGFloat
     @EnvironmentObject var viewModel: HomeViewModel
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        HStack {
             Text("Editorial")
                 .font(.headline)
-                .padding(.horizontal, 24)
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 16) {
-                    ForEach(viewModel.randomPhotos, id: \.id) { photo in
-                        ResultView(photo: photo)
-                            .frame(width: 200, height: 200)
-                            .cornerRadius(10)
-                            .shadow(radius: 2)
-                            .onAppear {
-                                viewModel.fetchMorePhotos(currentPhoto: photo)
-                            }
-                    }
+            Spacer()
+        }
+        .padding(.horizontal, contentPadding + 24)
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 16) {
+                ForEach(viewModel.randomPhotos, id: \.id) { photo in
+                    ResultView(photo: photo)
+                        .frame(width: 200, height: 200)
+                        .cornerRadius(10)
+                        .shadow(radius: 2)
+                        .onAppear {
+                            viewModel.fetchMorePhotos(currentPhoto: photo)
+                        }
                 }
-                .padding()
             }
+            .padding(.horizontal)
+            .padding(.horizontal, contentPadding)
         }
     }
 }
 
 struct PlaceholderSection: View {
+    let contentPadding: CGFloat
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        HStack {
             Text("Editorial")
                 .font(.headline)
-                .padding(.horizontal, 24)
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 16) {
-                    ForEach(1 ..< 15, id: \.self) { placeholder in
-                        Rectangle()
-                            .foregroundColor(Color.gray)
-                            .frame(width: 200, height: 200)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .shadow(radius: 2)
-                    }
+            Spacer()
+        }
+        .padding(.horizontal, contentPadding + 24)
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 16) {
+                ForEach(1 ..< 15, id: \.self) { placeholder in
+                    Rectangle()
+                        .foregroundColor(Color.gray)
+                        .frame(width: 200, height: 200)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .shadow(radius: 2)
                 }
-                .padding()
             }
+            .padding(.horizontal)
+            .padding(.horizontal, contentPadding)
         }
     }
 }
