@@ -52,17 +52,11 @@ struct ResultsGrid: View {
         ScrollView(showsIndicators: false) {
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 1)], spacing: 1) {
                 ForEach(viewModel.photos, id: \.id) { photo in
-                    Button {
-                        guard let portfolioUrl = photo.user.portfolioUrl else { return }
-                        UIApplication.shared.open(portfolioUrl)
-                    } label: {
-                        ResultView(photo: photo)
-                            .aspectRatio(1, contentMode: .fill)
-                    }
-                    .onAppear {
-                        viewModel.fetchMorePhotos(currentPhoto: photo)
-                    }
-                    .allowsHitTesting(photo.user.portfolio_url != nil)
+                    ResultView(photo: photo)
+                        .aspectRatio(1, contentMode: .fill)
+                        .onAppear {
+                            viewModel.fetchMorePhotos(currentPhoto: photo)
+                        }
                 }
             }
         }

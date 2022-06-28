@@ -10,22 +10,26 @@ import SwiftUI
 struct ResultView: View {
     let photo: Photo
     var body: some View {
-        ZStack(alignment: .bottom) {
-            ImageView(url: photo.urls.thumbUrl) {
-                Rectangle()
-                    .foregroundColor(Color.gray)
-            }
-            HStack(alignment: .lastTextBaseline) {
+        NavigationLink(destination: ImageViewer(photo: photo)) {
+            ZStack(alignment: .bottomLeading) {
+                AsynchronousImage(url: photo.urls.smallURL) { image in
+                    GeometryReader { geometryReader in
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: geometryReader.size.width, height: geometryReader.size.height)
+                            .clipped()
+                    }
+                } placeholder: {
+                    Rectangle()
+                        .foregroundColor(Color.gray)
+                }
                 Text(photo.user.name)
                     .multilineTextAlignment(.leading)
-                Spacer()
-                if photo.user.portfolio_url != nil {
-                    Image(systemName: "arrow.up.forward.app.fill")
-                }
+                    .foregroundColor(Color.white)
+                    .font(.caption.bold())
+                    .padding()
             }
-            .foregroundColor(Color.white)
-            .font(.caption.bold())
-            .padding()
         }
     }
 }

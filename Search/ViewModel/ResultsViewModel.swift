@@ -40,7 +40,9 @@ import Foundation
                 } else if let response = response as? HTTPURLResponse {
                     if response.statusCode == 200 {
                         guard let data = data else { return }
-                        if let decodedResponse = try? JSONDecoder().decode(Response.self, from: data) {
+                        let jsonDecoder = JSONDecoder()
+                        jsonDecoder.dateDecodingStrategy = .iso8601
+                        if let decodedResponse = try? jsonDecoder.decode(Response.self, from: data) {
                             self.photos.append(contentsOf: decodedResponse.results)
                         } else {
                             self.error = .decodingError
@@ -64,7 +66,9 @@ import Foundation
                 URLSession.shared.dataTask(with: queryUrl) { data, _, _ in
                     DispatchQueue.main.async {
                         guard let data = data else { return }
-                        if let decodedResponse = try? JSONDecoder().decode(Response.self, from: data) {
+                        let jsonDecoder = JSONDecoder()
+                        jsonDecoder.dateDecodingStrategy = .iso8601
+                        if let decodedResponse = try? jsonDecoder.decode(Response.self, from: data) {
                             self.photos.append(contentsOf: decodedResponse.results)
                         }
                         

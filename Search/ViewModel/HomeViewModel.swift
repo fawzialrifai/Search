@@ -39,7 +39,9 @@ import Foundation
         URLSession.shared.dataTask(with: queryUrl) { data, _, _ in
             DispatchQueue.main.async {
                 guard let encodedPhotos = data else { return }
-                if let decodedPhotos = try? JSONDecoder().decode([Photo].self, from: encodedPhotos) {
+                let jsonDecoder = JSONDecoder()
+                jsonDecoder.dateDecodingStrategy = .iso8601
+                if let decodedPhotos = try? jsonDecoder.decode([Photo].self, from: encodedPhotos) {
                     self.randomPhotos.append(contentsOf: decodedPhotos)
                 }
             }

@@ -118,19 +118,13 @@ struct RandomPhotosSection: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 16) {
                     ForEach(viewModel.randomPhotos, id: \.id) { photo in
-                        Button {
-                            guard let url = photo.user.portfolioUrl else { return }
-                            UIApplication.shared.open(url)
-                        } label: {
-                            ResultView(photo: photo)
-                                .frame(width: 200, height: 200)
-                                .cornerRadius(10)
-                                .shadow(radius: 2)
-                                .onAppear {
-                                    viewModel.fetchMorePhotos(currentPhoto: photo)
-                                }
-                        }
-                        .allowsHitTesting(photo.user.portfolio_url != nil)
+                        ResultView(photo: photo)
+                            .frame(width: 200, height: 200)
+                            .cornerRadius(10)
+                            .shadow(radius: 2)
+                            .onAppear {
+                                viewModel.fetchMorePhotos(currentPhoto: photo)
+                            }
                     }
                 }
                 .padding()
